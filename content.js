@@ -1,20 +1,12 @@
 
 let IsBet = 0
-let IsEnterAmount = 0
-let betAmount = 10
 function filterContent() {
     let rollingTime = document.getElementsByClassName("text-2xl font-bold font-numeric")
     let t
     if (rollingTime.length > 0) {
         t = rollingTime[0].innerHTML
         console.log("rolling", t)
-        const inputAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0]
-        if (IsEnterAmount == 0) {
-            IsEnterAmount = 1
-            inputAmount.value = betAmount.toString()
-            let e = new KeyboardEvent("keypress", {key: "Enter"});
-            inputAmount.dispatchEvent(e)
-        }
+        // const inputAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0]
         if (1 < parseFloat(t) && parseFloat(t) < 5 && IsBet == 0) {
             IsBet = 1
             bet(2)
