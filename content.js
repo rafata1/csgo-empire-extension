@@ -9,6 +9,7 @@ let Mode
 let PreviousChoice
 let CurrentChoice
 let BetAmount = 0.01
+let PreviousBetAmount = 0.01
 let VirMoney = 100
 
 function total() {
@@ -43,6 +44,8 @@ function doubleBetAmount() {
 }
 
 function afterResult(res) {
+    //storing previous betamount
+    PreviousBetAmount = BetAmount
     if (total() == 1) {
         Mode = 1
         if (res == "yellow") {
@@ -112,7 +115,7 @@ function logging(res) {
         console.log("SET MODE 1 WITH CHOICE", ChoiceToString(PreviousChoice))
         return
     }
-    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", BetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY:", VirMoney)
+    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", presetBetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY:", VirMoney)
     return
 }
 
@@ -122,6 +125,9 @@ function filterContent() {
     if (rollingTime.length > 0) {
         t = rollingTime[0].innerHTML
         // bet at last 5 seconds, bet only have the first result
+        if (total() == 0) {
+            resetBetAmount()
+        }
         if (1 < parseFloat(t) && parseFloat(t) < 5 && IsBet == 0 && total() > 0) {
             bet()
         }
