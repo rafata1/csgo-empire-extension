@@ -15,7 +15,7 @@ function total() {
     return countBlack + countWhite + countYellow
 }
 
-function switchMode() {
+function switchMode(res) {
     if ((res == "black" && CurrentChoice == 0) || (res == "yellow" && CurrentChoice == 1)) {
         if (Mode == 1 && LostSteakRule2 > 4) {
             Mode = 2
