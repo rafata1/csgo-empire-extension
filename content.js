@@ -19,9 +19,11 @@ function switchMode() {
     if ((res == "black" && CurrentChoice == 0) || (res == "yellow" && CurrentChoice == 1)) {
         if (Mode == 1 && LostSteakRule2 > 4) {
             Mode = 2
+            console.log("CHANGE TO MODE: ", Mode)
         }
         else if (Mode == 2 && LostSteakRule1 > 4) {
             Mode = 1
+            console.log("CHANGE TO MODE: ", Mode)
         }
     }
 }
