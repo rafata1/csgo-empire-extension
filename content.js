@@ -8,7 +8,7 @@ let LostSteakRule2 = -1
 let Mode
 let PreviousChoice
 let CurrentChoice
-let BetAmount
+let BetAmount = 0.01
 let VirMoney = 100
 
 function total() {
@@ -16,12 +16,14 @@ function total() {
 }
 
 function switchMode() {
-    if (Mode == 1 && LostSteakRule2 > 8) {
-        Mode = 2
-    } else
-        if (Mode == 2 && LostSteakRule1 > 8) {
+    if ((res == "black" && CurrentChoice == 0) || (res == "yellow" && CurrentChoice == 1)) {
+        if (Mode == 1 && LostSteakRule2 > 4) {
+            Mode = 2
+        }
+        else if (Mode == 2 && LostSteakRule1 > 4) {
             Mode = 1
         }
+    }
 }
 
 function resetBetAmount() {
@@ -43,8 +45,7 @@ function afterResult(res) {
         Mode = 1
         if (res == "yellow") {
             PreviousChoice = 1
-        } else
-        {
+        } else {
             PreviousChoice = 0
         }
         return
@@ -67,7 +68,6 @@ function afterResult(res) {
         // Increase money
         VirMoney = VirMoney + BetAmount * 2
         resetBetAmount()
-        switchMode()
     } else {
         if (Mode == 1) {
             LostSteakRule1++
@@ -89,10 +89,10 @@ function bet() {
     }
 
     let placeBetButtons = document.getElementsByClassName("bet-btn")
-    if (myChoice == 0) {
+    if (CurrentChoice == 0) {
         placeBetButtons[0].click()
     }
-    if (myChoice == 1) {
+    if (CurrentChoice == 1) {
         placeBetButtons[2].click()
     }
     PreviousChoice = CurrentChoice
@@ -107,7 +107,7 @@ function ChoiceToString(c) {
 
 function logging(res) {
     if (total() == 1) {
-        console.log("SET MODE 1 WITH CHOICE", PreviousChoice)
+        console.log("SET MODE 1 WITH CHOICE", ChoiceToString(PreviousChoice))
         return
     }
     console.log("VIRMONEY:", VirMoney)
@@ -140,7 +140,6 @@ function filterContent() {
                     if (IsIncreased == 0) {
                         let res = ""
                         IsIncreased = 1
-                        console.log("data: ", countBlack, countWhite, countYellow)
                         if (i == 2) {
                             res = "black"
                             countBlack = countBlack + 1
@@ -155,6 +154,8 @@ function filterContent() {
                         }
                         afterResult(res)
                         logging(res)
+                        // switch mode when having enough condition
+                        switchMode(res)
                     }
                 }
             }
