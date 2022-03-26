@@ -112,8 +112,7 @@ function logging(res) {
         console.log("SET MODE 1 WITH CHOICE", ChoiceToString(PreviousChoice))
         return
     }
-    console.log("VIRMONEY:", VirMoney)
-    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", BetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2)
+    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", BetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY:", VirMoney)
     return
 }
 
