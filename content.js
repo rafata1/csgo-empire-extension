@@ -38,7 +38,7 @@ function resetBetAmount() {
 }
 
 function doubleBetAmount() {
-    BetAmount *= 2
+    BetAmount *= 2.0
     let doubleBtn = document.getElementsByClassName("bet-input__control")[7]
     doubleBtn.click()
 }
@@ -115,7 +115,7 @@ function logging(res) {
         console.log("SET MODE 1 WITH CHOICE", ChoiceToString(PreviousChoice))
         return
     }
-    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", PreviousBetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY:", VirMoney)
+    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", PreviousBetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY:", VirMoney.toFixed(2))
     return
 }
 
