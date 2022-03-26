@@ -9,6 +9,7 @@ let Mode
 let PreviousChoice
 let CurrentChoice
 let BetAmount
+let VirMoney = 100
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -63,6 +64,8 @@ function afterResult(res) {
             LostSteakRule2 = 0
             LostSteakRule1++
         }
+        // Increase money
+        VirMoney = VirMoney + BetAmount * 2
         resetBetAmount()
         switchMode()
     } else {
@@ -94,6 +97,7 @@ function bet() {
     }
     PreviousChoice = CurrentChoice
     IsBet = 1
+    VirMoney -= BetAmount
 }
 
 function ChoiceToString(c) {
@@ -106,6 +110,7 @@ function logging(res) {
         console.log("SET MODE 1 WITH CHOICE", PreviousChoice)
         return
     }
+    console.log("VIRMONEY:", VirMoney)
     console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", BetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2)
     return
 }
