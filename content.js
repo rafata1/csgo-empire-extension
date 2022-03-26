@@ -3,8 +3,8 @@ let countYellow = 0
 let countBlack = 0
 let countWhite = 0
 let IsIncreased = 0
-let LostSteakRule1 = -1
-let LostSteakRule2 = -1
+let LostSteakRule1 = 0
+let LostSteakRule2 = 0
 let Mode
 let PreviousChoice
 let CurrentChoice
