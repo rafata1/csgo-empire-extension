@@ -11,6 +11,7 @@ let CurrentChoice
 let BetAmount = 0.01
 let PreviousBetAmount = 0.01
 let VirMoney = 100
+let IsStarted = false
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -94,11 +95,14 @@ function bet() {
     }
 
     let placeBetButtons = document.getElementsByClassName("bet-btn")
-    if (CurrentChoice == 0) {
-        placeBetButtons[0].click()
-    }
-    if (CurrentChoice == 1) {
-        placeBetButtons[2].click()
+    // if click start button then can click bet btn
+    if (IsStarted) {
+        if (CurrentChoice == 0) {
+            placeBetButtons[0].click()
+        }
+        if (CurrentChoice == 1) {
+            placeBetButtons[2].click()
+        }
     }
     PreviousChoice = CurrentChoice
     IsBet = 1
@@ -169,5 +173,20 @@ function filterContent() {
         }
     }
 }
+
+function handleStartClick() {
+    if (startBtn.innerText == "start") {
+        startBtn.innerText = "stop"
+    } else {
+        startBtn.innerText = "start"
+    }
+    IsStarted = !IsStarted
+}
+
+const startBtn = document.createElement("Button")
+startBtn.innerText = "start"
+startBtn.onclick = handleStartClick
+
+document.getElementsByClassName("layout")[0].appendChild(startBtn)
 
 setInterval(filterContent, 1500)
