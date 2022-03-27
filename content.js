@@ -8,10 +8,12 @@ let LostSteakRule2 = 0
 let Mode
 let PreviousChoice
 let CurrentChoice
+let PreviousRes
 let BetAmount = 0.01
 let PreviousBetAmount = 0.01
 let VirMoney = 100
 let IsStarted = false
+let Eated = false
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -47,6 +49,7 @@ function doubleBetAmount() {
 function afterResult(res) {
     //storing previous betamount
     PreviousBetAmount = BetAmount
+    PreviousRes = res
     if (total() == 1) {
         Mode = 1
         if (res == "yellow") {
@@ -73,6 +76,7 @@ function afterResult(res) {
         }
         // Increase money
         VirMoney += BetAmount * 2.0
+        Eated = true
         resetBetAmount()
     } else {
         if (Mode == 1) {
@@ -89,9 +93,15 @@ function afterResult(res) {
 function bet() {
     // 1 equal yellow, 0 equal black
     if (Mode == 1) {
-        CurrentChoice = PreviousChoice
+        if (PreviousRes == "dice") {
+            CurrentChoice = PreviousChoice
+        } else if (PreviousRes == "yellow") {
+            CurrentChoice = 1
+        } else if (PreviousRes == "black") {
+            CurrentChoice = 0
+        }
     } else if (Mode == 2) {
-        CurrentChoice = 1 - PreviousChoice
+        if (!Eated) { CurrentChoice = PreviousChoice } else { CurrentChoice = 1 - PreviousChoice}
     }
 
     let placeBetButtons = document.getElementsByClassName("bet-btn")
