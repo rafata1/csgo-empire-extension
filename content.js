@@ -175,16 +175,16 @@ inputX.placeholder = "x....."
 inputX.setAttribute("type", "number")
 
 const a001 = document.createElement("button")
-a001.innerText = "0.01"
-a001.onclick = () => { configAmount = 1 }
+a001.innerText = "0.03"
+a001.onclick = () => { configAmount = 1; alert("Ok") }
 
 const a005 = document.createElement("button")
 a005.innerText = "0.05"
-a005.onclick = () => { configAmount = 2 }
+a005.onclick = () => { configAmount = 2; alert("Ok")}
 
 const a01 = document.createElement("button")
 a01.innerText = "0.1"
-a01.onclick = () => { configAmount = 3 }
+a01.onclick = () => { configAmount = 3 ; alert("Ok")}
 
 function SetupUI() {
     SetUi = true
