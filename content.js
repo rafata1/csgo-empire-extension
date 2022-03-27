@@ -21,11 +21,11 @@ function total() {
 
 function switchMode(res) {
     if ((res == "black" && CurrentChoice == 0) || (res == "yellow" && CurrentChoice == 1)) {
-        if (Mode == 1 && LostSteakRule2 > 4) {
+        if (Mode == 1 && LostSteakRule2 > 7) {
             Mode = 2
             console.log("CHANGE TO MODE: ", Mode)
         }
-        else if (Mode == 2 && LostSteakRule1 > 4) {
+        else if (Mode == 2 && LostSteakRule1 > 7) {
             Mode = 1
             console.log("CHANGE TO MODE: ", Mode)
         }
@@ -101,7 +101,7 @@ function bet() {
             CurrentChoice = 0
         }
     } else if (Mode == 2) {
-        if (!Eated) { CurrentChoice = PreviousChoice } else { CurrentChoice = 1 - PreviousChoice}
+        if (!Eated) { CurrentChoice = PreviousChoice } else { CurrentChoice = 1 - PreviousChoice }
     }
 
     let placeBetButtons = document.getElementsByClassName("bet-btn")
@@ -117,6 +117,7 @@ function bet() {
     PreviousChoice = CurrentChoice
     IsBet = 1
     VirMoney -= BetAmount
+    Eated = false
 }
 
 function ChoiceToString(c) {
@@ -184,6 +185,7 @@ function filterContent() {
     }
 }
 
+
 function handleStartClick() {
     if (startBtn.innerText == "start") {
         startBtn.innerText = "stop"
@@ -200,3 +202,56 @@ startBtn.onclick = handleStartClick
 document.getElementsByClassName("layout")[0].appendChild(startBtn)
 
 setInterval(filterContent, 1500)
+// function runVirtual(ress) {
+//     for (let i = 0; i < ress.length; i++) {
+//         resetBetAmount()
+//         if (total() > 0) bet();
+//         res = ress[i]
+//         if (res == "yellow") {
+//             countYellow ++
+//         }
+//         if (res == "black") {
+//             countBlack ++
+//         }
+//         if (res == "dice") {
+//             countWhite ++
+//         }
+//         afterResult(res)
+//         logging(res)
+//         switchMode(res)
+//     }
+// }
+
+// runVirtual([
+//     "dice",
+//     "yellow",
+//     "black",
+//     "yellow",
+//     "black",
+//     "yellow",
+//     "black",
+//     "yellow",
+//     "yellow",
+//     "dice",
+//     "black",
+//     "black",
+//     "yellow",
+//     "black",
+//     "black",
+//     "black",
+//     "black",
+//     "black",
+//     "black",
+//     "black",
+//     "black",
+//     "yellow",
+//     "dice",
+//     "yellow",
+//     "black",
+//     "dice",
+//     "yellow",
+//     "black",
+//     "dice",
+//     "yellow",
+//     "black"
+// ])
