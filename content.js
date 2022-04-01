@@ -5,18 +5,20 @@ let countWhite = 0
 let IsIncreased = 0
 let LostSteakRule1 = 0
 let LostSteakRule2 = 0
-let Mode
-let PreviousChoice
-let CurrentChoice
+let Mode = -1
 let PreviousRes
-let BetAmount = 0.01
-let PreviousBetAmount = 0.01
 let VirMoney
 let IsStarted = false
-let Eated = false
+let Eated = 0
 let SetUi = false
-let MaxLostStreak = 7
+let MaxLostStreak = 4
 let configAmount = 1
+let timesDoubled = 0
+let MaxTimesDouble = 5
+let Choice = -1
+let PreviousChoice = -1
+let MaxEating = 3
+
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -24,7 +26,6 @@ function total() {
 
 
 function resetBetAmount() {
-    // BetAmount = 0.01
     let clearBtn = document.getElementsByClassName("bet-input__control")[0]
     clearBtn.click()
     if (configAmount == 1) {
@@ -49,30 +50,113 @@ function resetBetAmount() {
 }
 
 function doubleBetAmount() {
-    // BetAmount *= 2.0
     let doubleBtn = document.getElementsByClassName("bet-input__control")[7]
     doubleBtn.click()
 }
 
 function afterResult(res) {
-    PreviousRes = res
-    if (total() == 1) return
+    if (total() == 1) {
+        PreviousRes = res
+        return
+    }
     if (res == "dice") {
         LostSteakRule1++
         LostSteakRule2++
+        Eated = 0
         return
     }
 
     if (res == PreviousRes) {
         LostSteakRule1 = 0
-        LostSteakRule2 ++
+        LostSteakRule2++
     } else {
-        LostSteakRule1 ++
+        LostSteakRule1++
         LostSteakRule2 = 0
+    }
+    PreviousRes = res
+    if ((res == 'black' && Choice == 0) || (res == "yellow" && Choice == 1)) {
+        Eated++
     }
 }
 
 function bet() {
+    if (LostSteakRule1 > MaxLostStreak && Mode == -1) {
+        Mode = 1
+    }
+    if (LostSteakRule2 > MaxLostStreak && Mode == -1) {
+        Mode = 2
+    }
+
+    if (Mode == -1) {
+        return
+    }
+
+    if (Eated == MaxEating) {
+        Mode = -1
+        Choice = -1
+        timesDoubled = 0
+        resetBetAmount()
+        Eated = 0
+        return
+    }
+
+    if (Mode == 1) {
+        if (timesDoubled == 0) {
+            if (PreviousRes == "black") {
+                Choice = 0
+            }
+            if (PreviousRes == "yellow") {
+                Choice = 1
+            }
+            resetBetAmount()
+        } else {
+            if (timesDoubled == MaxTimesDouble) {
+                Mode = -1
+                resetBetAmount()
+                timesDoubled = 0
+                Choice = -1
+                return
+            } else {
+                if (PreviousRes == "black") {
+                    Choice = 0
+                }
+                if (PreviousRes == "yellow") {
+                    Choice = 1
+                }
+                doubleBetAmount()
+            }
+        }
+    }
+
+
+    if (Mode == 2) {
+        if (timesDoubled == 0) {
+            if (PreviousRes == "black") {
+                Choice = 1
+            }
+            if (PreviousRes == "yellow") {
+                Choice = 0
+            }
+            resetBetAmount()
+        } else {
+            if (timesDoubled > MaxTimesDouble) {
+                Mode = -1
+                resetBetAmount()
+                timesDoubled = 0
+                Choice = -1
+                return
+            } else {
+                if (PreviousRes == "black") {
+                    Choice = 1
+                }
+                if (PreviousRes == "yellow") {
+                    Choice = 0
+                }
+                doubleBetAmount()
+            }
+        }
+    }
+    console.log("BET MODE", Mode, "CHOICE", ChoiceToString(Choice), "x2 TIMEs", "WIN STREAK", Eated)
 }
 
 function ChoiceToString(c) {
@@ -86,7 +170,7 @@ function logging(res) {
         return
     }
     VirMoney = document.getElementsByClassName("whitespace-nowrap font-numeric")[0].innerText
-    console.log("LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "RESULT:", res)
+    console.log("RESULT:", res, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", VirMoney)
     return
 }
 
@@ -113,11 +197,11 @@ a001.onclick = () => { configAmount = 1; alert("Ok") }
 
 const a005 = document.createElement("button")
 a005.innerText = "0.05"
-a005.onclick = () => { configAmount = 2; alert("Ok")}
+a005.onclick = () => { configAmount = 2; alert("Ok") }
 
 const a01 = document.createElement("button")
 a01.innerText = "0.1"
-a01.onclick = () => { configAmount = 3 ; alert("Ok")}
+a01.onclick = () => { configAmount = 3; alert("Ok") }
 
 function SetupUI() {
     SetUi = true
@@ -143,6 +227,7 @@ function filterContent() {
         }
         if (1 < parseFloat(t) && parseFloat(t) < 5 && IsBet == 0 && total() > 0) {
             bet()
+            IsBet = 1
         }
     }
 
@@ -181,5 +266,18 @@ function filterContent() {
     }
 }
 
-
 setInterval(filterContent, 1500)
+
+// //tests
+
+// virtualRes = ["black", "yellow", "yellow", "yellow", "yellow", "dice", "yellow", "black", "dice", "dice", "dice", "dice", "black", "black", "black", "yellow", "dice", "yellow", "black", "yellow", "black", "yellow", "black", "yellow", "black"]
+// for (let i = 0; i < virtualRes.length; i++) {
+//     if (total() > 0) {
+//         bet()
+//     }
+//     if (virtualRes[i] == "black") countBlack++
+//     if (virtualRes[i] == "white") countWhite++
+//     if (virtualRes[i] == "yellow") countYellow++
+//     afterResult(virtualRes[i])
+//     logging(virtualRes[i])
+// }
