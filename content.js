@@ -22,22 +22,6 @@ function total() {
     return countBlack + countWhite + countYellow
 }
 
-function switchMode(res) {
-    if ((res == "black" && CurrentChoice == 0) || (res == "yellow" && CurrentChoice == 1)) {
-        if (inputX.value > 0) {
-            MaxLostStreak = inputX.value
-            console.log("set max loststreak to ", MaxLostStreak)
-        }
-        if (Mode == 1 && LostSteakRule2 > MaxLostStreak) {
-            Mode = 2
-            console.log("CHANGE TO MODE: ", Mode)
-        }
-        else if (Mode == 2 && LostSteakRule1 > MaxLostStreak) {
-            Mode = 1
-            console.log("CHANGE TO MODE: ", Mode)
-        }
-    }
-}
 
 function resetBetAmount() {
     // BetAmount = 0.01
@@ -63,6 +47,7 @@ function resetBetAmount() {
     }
     PreviousBetAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
 }
+
 function doubleBetAmount() {
     // BetAmount *= 2.0
     let doubleBtn = document.getElementsByClassName("bet-input__control")[7]
@@ -70,76 +55,24 @@ function doubleBetAmount() {
 }
 
 function afterResult(res) {
-    //storing previous betamount
     PreviousRes = res
-    if (total() == 1) {
-        Mode = 1
-        if (res == "yellow") {
-            PreviousChoice = 1
-        } else {
-            PreviousChoice = 0
-        }
-        return
-    }
+    if (total() == 1) return
     if (res == "dice") {
-        doubleBetAmount()
         LostSteakRule1++
         LostSteakRule2++
         return
     }
 
-    if ((res == "black" && CurrentChoice == 0) || (res == "yellow" && CurrentChoice == 1)) {
-        if (Mode == 1) {
-            LostSteakRule1 = 0
-            LostSteakRule2++
-        } else {
-            LostSteakRule2 = 0
-            LostSteakRule1++
-        }
-        // Increase money
-        VirMoney += BetAmount * 2.0
-        Eated = true
-        resetBetAmount()
+    if (res == PreviousRes) {
+        LostSteakRule1 = 0
+        LostSteakRule2 ++
     } else {
-        if (Mode == 1) {
-            LostSteakRule1++
-            LostSteakRule2 = 0
-        } else {
-            LostSteakRule2++
-            LostSteakRule1 = 0
-        }
-        doubleBetAmount()
+        LostSteakRule1 ++
+        LostSteakRule2 = 0
     }
 }
 
 function bet() {
-    // 1 equal yellow, 0 equal black
-    if (Mode == 1) {
-        if (PreviousRes == "dice") {
-            CurrentChoice = PreviousChoice
-        } else if (PreviousRes == "yellow") {
-            CurrentChoice = 1
-        } else if (PreviousRes == "black") {
-            CurrentChoice = 0
-        }
-    } else if (Mode == 2) {
-        if (!Eated) { CurrentChoice = PreviousChoice } else { CurrentChoice = 1 - PreviousChoice }
-    }
-
-    let placeBetButtons = document.getElementsByClassName("bet-btn")
-    // if click start button then can click bet btn
-    if (IsStarted) {
-        if (CurrentChoice == 0) {
-            placeBetButtons[0].click()
-        }
-        if (CurrentChoice == 1) {
-            placeBetButtons[2].click()
-        }
-    }
-    PreviousChoice = CurrentChoice
-    IsBet = 1
-    // VirMoney -= BetAmount
-    Eated = false
 }
 
 function ChoiceToString(c) {
@@ -149,11 +82,11 @@ function ChoiceToString(c) {
 
 function logging(res) {
     if (total() == 1) {
-        console.log("SET MODE 1 WITH CHOICE", ChoiceToString(PreviousChoice))
+        console.log("CE FIRST RESULT: ", res)
         return
     }
     VirMoney = document.getElementsByClassName("whitespace-nowrap font-numeric")[0].innerText
-    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(CurrentChoice), "RESULT:", res, "AMOUNT:", PreviousBetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY:", VirMoney)
+    console.log("LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "RESULT:", res)
     return
 }
 
@@ -241,8 +174,6 @@ function filterContent() {
                         }
                         afterResult(res)
                         logging(res)
-                        // switch mode when having enough condition
-                        switchMode(res)
                     }
                 }
             }
