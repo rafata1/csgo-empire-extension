@@ -11,14 +11,17 @@ let VirMoney
 let IsStarted = false
 let Eated = 0
 let SetUi = false
-let MaxLostStreak = 4
 let configAmount = 1
 let timesDoubled = 0
 let MaxTimesDouble = 5
 let Choice = -1
 let PreviousChoice = -1
-let MaxEating = 3
+let PreviousBetAmount = 0
 
+//config
+let MaxEating = 3
+let BetAmount = 0.01
+let MaxLostStreak = 2
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -28,25 +31,14 @@ function total() {
 function resetBetAmount() {
     let clearBtn = document.getElementsByClassName("bet-input__control")[0]
     clearBtn.click()
-    if (configAmount == 1) {
+    if (BetAmount == 0.01) {
         let add001Btn = document.getElementsByClassName("bet-input__control")[1]
         add001Btn.click()
-        add001Btn.click()
-        add001Btn.click()
     }
-    if (configAmount == 2) {
-        let add001Btn = document.getElementsByClassName("bet-input__control")[1]
-        add001Btn.click()
-        add001Btn.click()
-        add001Btn.click()
-        add001Btn.click()
-        add001Btn.click()
-    }
-    if (configAmount == 3) {
+    if (BetAmount == 0.1) {
         let add01Btn = document.getElementsByClassName("bet-input__control")[2]
         add01Btn.click()
     }
-    PreviousBetAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
 }
 
 function doubleBetAmount() {
@@ -63,6 +55,7 @@ function afterResult(res) {
         LostSteakRule1++
         LostSteakRule2++
         Eated = 0
+        doubleBetAmount()
         return
     }
 
@@ -76,18 +69,31 @@ function afterResult(res) {
     PreviousRes = res
     if ((res == 'black' && Choice == 0) || (res == "yellow" && Choice == 1)) {
         Eated++
+    } else {
+        Eated = 0
+    }
+
+    if (Eated > 0) {
+        resetBetAmount()
+    } else {
+        if (Mode != -1) {
+            doubleBetAmount()
+        }
     }
 }
 
 function bet() {
     if (LostSteakRule1 > MaxLostStreak && Mode == -1) {
+        resetBetAmount()
         Mode = 1
     }
     if (LostSteakRule2 > MaxLostStreak && Mode == -1) {
+        resetBetAmount()
         Mode = 2
     }
 
     if (Mode == -1) {
+        PreviousBetAmount = 0
         return
     }
 
@@ -97,80 +103,64 @@ function bet() {
         timesDoubled = 0
         resetBetAmount()
         Eated = 0
+        PreviousBetAmount = 0
         return
     }
 
     if (Mode == 1) {
-        if (timesDoubled == 0) {
-            if (PreviousRes == "black") {
-                Choice = 0
-            }
-            if (PreviousRes == "yellow") {
-                Choice = 1
-            }
-            resetBetAmount()
-        } else {
-            if (timesDoubled == MaxTimesDouble) {
-                Mode = -1
-                resetBetAmount()
-                timesDoubled = 0
-                Choice = -1
-                return
-            } else {
-                if (PreviousRes == "black") {
-                    Choice = 0
-                }
-                if (PreviousRes == "yellow") {
-                    Choice = 1
-                }
-                doubleBetAmount()
-            }
+        if (PreviousRes == "black") {
+            Choice = 0
+        }
+        if (PreviousRes == "yellow") {
+            Choice = 1
         }
     }
-
-
     if (Mode == 2) {
-        if (timesDoubled == 0) {
-            if (PreviousRes == "black") {
-                Choice = 1
-            }
-            if (PreviousRes == "yellow") {
-                Choice = 0
-            }
-            resetBetAmount()
-        } else {
-            if (timesDoubled > MaxTimesDouble) {
-                Mode = -1
-                resetBetAmount()
-                timesDoubled = 0
-                Choice = -1
-                return
-            } else {
-                if (PreviousRes == "black") {
-                    Choice = 1
-                }
-                if (PreviousRes == "yellow") {
-                    Choice = 0
-                }
-                doubleBetAmount()
-            }
+        if (PreviousRes == "black") {
+            Choice = 1
+        }
+        if (PreviousRes == "yellow") {
+            Choice = 0
         }
     }
-    console.log("BET MODE", Mode, "CHOICE", ChoiceToString(Choice), "x2 TIMEs", "WIN STREAK", Eated)
+    PreviousBetAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
+
+    if (parseFloat(PreviousBetAmount) > BetAmount * Math.pow(2, MaxTimesDouble -1)) {
+        console.log('GIVE UP')
+        Mode = -1
+        Choice = -1
+        timesDoubled = 0
+        resetBetAmount()
+        Eated = 0
+        PreviousBetAmount = 0
+        return
+    }
+
+    let placeBetButtons = document.getElementsByClassName("bet-btn")
+    if (IsStarted) {
+        if (Choice == 0) {
+            placeBetButtons[0].click()
+        }
+        if (Choice == 1) {
+            placeBetButtons[2].click()
+        }
+    }
 }
 
 function ChoiceToString(c) {
+    if (c == -1) return "none"
     if (c == 0) return "black"
     if (c == 1) return "yellow"
 }
 
 function logging(res) {
     if (total() == 1) {
-        console.log("CE FIRST RESULT: ", res)
+        console.log("FIRST RESULT: ", res)
         return
     }
-    VirMoney = document.getElementsByClassName("whitespace-nowrap font-numeric")[0].innerText
-    console.log("RESULT:", res, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", VirMoney)
+    Money = document.getElementsByClassName("whitespace-nowrap font-numeric")[0].innerText
+    console.log('x2Times', timesDoubled, 'EATED', Eated)
+    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", PreviousBetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", Money)
     return
 }
 
@@ -187,30 +177,10 @@ const startBtn = document.createElement("Button")
 startBtn.innerText = "start"
 startBtn.onclick = handleStartClick
 
-const inputX = document.createElement("input")
-inputX.placeholder = "x....."
-inputX.setAttribute("type", "number")
-
-const a001 = document.createElement("button")
-a001.innerText = "0.03"
-a001.onclick = () => { configAmount = 1; alert("Ok") }
-
-const a005 = document.createElement("button")
-a005.innerText = "0.05"
-a005.onclick = () => { configAmount = 2; alert("Ok") }
-
-const a01 = document.createElement("button")
-a01.innerText = "0.1"
-a01.onclick = () => { configAmount = 3; alert("Ok") }
-
 function SetupUI() {
     SetUi = true
     let container = document.getElementsByClassName("layout")[0]
     container.appendChild(startBtn)
-    container.appendChild(a001)
-    container.appendChild(a005)
-    container.appendChild(a01)
-    container.appendChild(inputX)
 }
 
 function filterContent() {
