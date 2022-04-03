@@ -39,6 +39,10 @@ function resetBetAmount() {
         let add01Btn = document.getElementsByClassName("bet-input__control")[2]
         add01Btn.click()
     }
+    if (BetAmount == 1) {
+        let add1Btn = document.getElementsByClassName("bet-input__control")[3]
+        add1Btn.click()
+    }
 }
 
 function doubleBetAmount() {
@@ -125,7 +129,7 @@ function bet() {
     }
     PreviousBetAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
 
-    if (parseFloat(PreviousBetAmount) > BetAmount * Math.pow(2, MaxTimesDouble -1)) {
+    if (parseFloat(PreviousBetAmount) > BetAmount * Math.pow(2, MaxTimesDouble - 1)) {
         console.log('GIVE UP')
         Mode = -1
         Choice = -1
