@@ -7,21 +7,16 @@ let LostSteakRule1 = 0
 let LostSteakRule2 = 0
 let Mode = -1
 let PreviousRes
-let VirMoney
 let IsStarted = false
-let Eated = 0
 let SetUi = false
-let configAmount = 1
-let timesDoubled = 0
-let MaxTimesDouble = 5
 let Choice = -1
-let PreviousChoice = -1
-let PreviousBetAmount = 0
+let Eated = 0
 
 //config
 let MaxEating = 3
 let BetAmount = 0.01
-let MaxLostStreak = 2
+let MaxLostStreak = 4
+let MaxTimesDouble = 3
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -34,18 +29,28 @@ function resetBetAmount() {
     if (BetAmount == 0.01) {
         let add001Btn = document.getElementsByClassName("bet-input__control")[1]
         add001Btn.click()
+        console.log("reset to 0.01")
     }
     if (BetAmount == 0.1) {
         let add01Btn = document.getElementsByClassName("bet-input__control")[2]
         add01Btn.click()
+        console.log("reset to 0.1")
     }
     if (BetAmount == 1) {
         let add1Btn = document.getElementsByClassName("bet-input__control")[3]
         add1Btn.click()
+        console.log("reset to 1")
     }
 }
 
+function clearBetAmount() {
+    console.log("clear bet amount")
+    let clearBtn = document.getElementsByClassName("bet-input__control")[0]
+    clearBtn.click()
+}
+
 function doubleBetAmount() {
+    console.log("double bet amount")
     let doubleBtn = document.getElementsByClassName("bet-input__control")[7]
     doubleBtn.click()
 }
@@ -58,8 +63,6 @@ function afterResult(res) {
     if (res == "dice") {
         LostSteakRule1++
         LostSteakRule2++
-        Eated = 0
-        doubleBetAmount()
         return
     }
 
@@ -71,44 +74,52 @@ function afterResult(res) {
         LostSteakRule2 = 0
     }
     PreviousRes = res
-    if ((res == 'black' && Choice == 0) || (res == "yellow" && Choice == 1)) {
-        Eated++
-    } else {
-        Eated = 0
-    }
-
-    if (Eated > 0) {
-        resetBetAmount()
-    } else {
-        if (Mode != -1) {
-            doubleBetAmount()
-        }
+    if (res == ChoiceToString(Choice) && Mode != -1) {
+        Eated ++
     }
 }
 
 function bet() {
-    if (LostSteakRule1 > MaxLostStreak && Mode == -1) {
-        resetBetAmount()
+    IsBet = 1
+    let isFirstTime = false
+    if (LostSteakRule1 >= MaxLostStreak && Mode == -1) {
+        isFirstTime = true
         Mode = 1
     }
-    if (LostSteakRule2 > MaxLostStreak && Mode == -1) {
-        resetBetAmount()
+    if (LostSteakRule2 >= MaxLostStreak && Mode == -1) {
+        isFirstTime = true
         Mode = 2
     }
 
     if (Mode == -1) {
-        PreviousBetAmount = 0
         return
     }
 
     if (Eated == MaxEating) {
+        clearBetAmount()
         Mode = -1
         Choice = -1
-        timesDoubled = 0
-        resetBetAmount()
         Eated = 0
-        PreviousBetAmount = 0
+        console.log("GIVE UP")
         return
+    }
+
+    console.log(isFirstTime, "Eated:", Eated)
+    if (isFirstTime == true || Eated > 0) {
+        resetBetAmount()
+        isFirstTime = false
+    } else {
+        doubleBetAmount()
+        let showingAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
+        console.log(showingAmount, BetAmount * Math.pow(2, MaxTimesDouble - 1))
+        if (parseFloat(showingAmount) > BetAmount * Math.pow(2, MaxTimesDouble - 1)) {
+            clearBetAmount()
+            Mode = -1
+            Choice = -1
+            Eated = 0
+            console.log("GIVE UP")
+            return
+        }
     }
 
     if (Mode == 1) {
@@ -126,18 +137,6 @@ function bet() {
         if (PreviousRes == "yellow") {
             Choice = 0
         }
-    }
-    PreviousBetAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
-
-    if (parseFloat(PreviousBetAmount) > BetAmount * Math.pow(2, MaxTimesDouble - 1)) {
-        console.log('GIVE UP')
-        Mode = -1
-        Choice = -1
-        timesDoubled = 0
-        resetBetAmount()
-        Eated = 0
-        PreviousBetAmount = 0
-        return
     }
 
     let placeBetButtons = document.getElementsByClassName("bet-btn")
@@ -163,8 +162,8 @@ function logging(res) {
         return
     }
     Money = document.getElementsByClassName("whitespace-nowrap font-numeric")[0].innerText
-    console.log('x2Times', timesDoubled, 'EATED', Eated)
-    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", PreviousBetAmount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", Money)
+    amount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
+    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", Money)
     return
 }
 
@@ -197,12 +196,11 @@ function filterContent() {
         t = rollingTime[0].innerHTML
         // bet at last 5 seconds, bet only have the first result
         if (total() == 0) {
-            resetBetAmount()
-        }
-        if (1 < parseFloat(t) && parseFloat(t) < 5 && IsBet == 0 && total() > 0) {
-            bet()
-            IsBet = 1
-        }
+            clearBetAmount()
+        } else
+            if (1 < parseFloat(t) && parseFloat(t) < 5 && IsBet == 0) {
+                bet()
+            }
     }
 
     if (t && t != "0.00") {
@@ -241,17 +239,3 @@ function filterContent() {
 }
 
 setInterval(filterContent, 1500)
-
-// //tests
-
-// virtualRes = ["black", "yellow", "yellow", "yellow", "yellow", "dice", "yellow", "black", "dice", "dice", "dice", "dice", "black", "black", "black", "yellow", "dice", "yellow", "black", "yellow", "black", "yellow", "black", "yellow", "black"]
-// for (let i = 0; i < virtualRes.length; i++) {
-//     if (total() > 0) {
-//         bet()
-//     }
-//     if (virtualRes[i] == "black") countBlack++
-//     if (virtualRes[i] == "white") countWhite++
-//     if (virtualRes[i] == "yellow") countYellow++
-//     afterResult(virtualRes[i])
-//     logging(virtualRes[i])
-// }
