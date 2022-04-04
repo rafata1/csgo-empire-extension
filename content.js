@@ -110,6 +110,7 @@ function bet() {
         isFirstTime = false
     } else {
         let showingAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
+        showingAmount = showingAmount.replace(",",".")
         console.log(showingAmount, BetAmount * Math.pow(2, MaxTimesDouble - 1))
         if (parseFloat(showingAmount) * 2 > BetAmount * Math.pow(2, MaxTimesDouble - 1)) {
             clearBetAmount()
@@ -203,11 +204,11 @@ function filterContent() {
             }
     }
 
-    if (t && t != "0.00") {
+    if (t && t != "0,00") {
         IsIncreased = 0
     }
 
-    if (t && t == "0.00") {
+    if (t && t == "0,01") {
         IsBet = 0
         let betValues = document.getElementsByClassName("whitespace-nowrap font-numeric")
         if (betValues.length > 0) {
