@@ -109,10 +109,9 @@ function bet() {
         resetBetAmount()
         isFirstTime = false
     } else {
-        doubleBetAmount()
         let showingAmount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
         console.log(showingAmount, BetAmount * Math.pow(2, MaxTimesDouble - 1))
-        if (parseFloat(showingAmount) > BetAmount * Math.pow(2, MaxTimesDouble - 1)) {
+        if (parseFloat(showingAmount) * 2 > BetAmount * Math.pow(2, MaxTimesDouble - 1)) {
             clearBetAmount()
             Mode = -1
             Choice = -1
@@ -120,6 +119,7 @@ function bet() {
             console.log("GIVE UP")
             return
         }
+        doubleBetAmount()
     }
 
     if (Mode == 1) {
