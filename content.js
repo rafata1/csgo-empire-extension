@@ -11,6 +11,7 @@ let IsStarted = false
 let SetUi = false
 let Choice = -1
 let Eated = 0
+let isWinBefore
 
 //config
 let MaxEating = 3
@@ -56,6 +57,7 @@ function doubleBetAmount() {
 }
 
 function afterResult(res) {
+    isWinBefore = false
     if (total() == 1) {
         PreviousRes = res
         return
@@ -74,6 +76,9 @@ function afterResult(res) {
         LostSteakRule2 = 0
     }
     PreviousRes = res
+    if (res == ChoiceToString(Choice)) {
+        isWinBefore = true
+    }
     if (res == ChoiceToString(Choice) && Mode != -1) {
         Eated ++
     }
@@ -105,7 +110,7 @@ function bet() {
     }
 
     console.log(isFirstTime, "Eated:", Eated)
-    if (isFirstTime == true || Eated > 0) {
+    if (isFirstTime == true || isWinBefore == true) {
         resetBetAmount()
         isFirstTime = false
     } else {
@@ -208,7 +213,7 @@ function filterContent() {
         IsIncreased = 0
     }
 
-    if (t && t == "0,01") {
+    if (t && t == "0,00") {
         IsBet = 0
         let betValues = document.getElementsByClassName("whitespace-nowrap font-numeric")
         if (betValues.length > 0) {
