@@ -12,6 +12,7 @@ let SetUi = false
 let Choice = -1
 let Eated = 0
 let isWinBefore
+let amountBeforeBet = 0
 
 //config
 let MaxEating = 3
@@ -85,6 +86,7 @@ function afterResult(res) {
 }
 
 function bet() {
+    amountBeforeBet = document.getElementsByClassName("whitespace-nowrap font-numeric")[0].innerText
     IsBet = 1
     let isFirstTime = false
     if (LostSteakRule1 >= MaxLostStreak && Mode == -1) {
@@ -167,9 +169,8 @@ function logging(res) {
         console.log("FIRST RESULT: ", res)
         return
     }
-    Money = document.getElementsByClassName("whitespace-nowrap font-numeric")[0].innerText
     amount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
-    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", Money)
+    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", amountBeforeBet)
     return
 }
 
@@ -204,7 +205,7 @@ function filterContent() {
         if (total() == 0) {
             clearBetAmount()
         } else
-            if (1 < parseFloat(t) && parseFloat(t) < 5 && IsBet == 0) {
+            if (1 < parseFloat(t) && parseFloat(t) < 10 && IsBet == 0) {
                 bet()
             }
     }
