@@ -164,6 +164,20 @@ function ChoiceToString(c) {
     if (c == 1) return "yellow"
 }
 
+async function alert(ls1, ls2) {
+    try {
+        const resp = await fetch('https://hooks.slack.com/services/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', { method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "no-cors",
+            body: JSON.stringify({text: JSON.stringify({ls1:ls1, ls2:ls2})})
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 function logging(res) {
     if (total() == 1) {
         console.log("FIRST RESULT: ", res)
@@ -171,6 +185,9 @@ function logging(res) {
     }
     amount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
     console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", amountBeforeBet)
+    if (LostSteakRule1 >= 10 || LostSteakRule2 >= 10) {
+        alert(LostSteakRule1, LostSteakRule2)
+    }
     return
 }
 
@@ -210,11 +227,11 @@ function filterContent() {
             }
     }
 
-    if (t && t != "0,00") {
+    if (t && (t != "0,00" || t!= "0.00")) {
         IsIncreased = 0
     }
 
-    if (t && t == "0,00") {
+    if (t && (t == "0,00" || t == "0.00")) {
         IsBet = 0
         let betValues = document.getElementsByClassName("whitespace-nowrap font-numeric")
         if (betValues.length > 0) {
