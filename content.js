@@ -19,6 +19,7 @@ let MaxEating = 3
 let BetAmount = 0.01
 let MaxLostStreak = 4
 let MaxTimesDouble = 3
+let AlertLS = 10
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -171,7 +172,7 @@ function logging(res) {
     }
     amount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
     console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", amountBeforeBet)
-    if (LostSteakRule1 >= 10 || LostSteakRule2 >= 10) {
+    if (LostSteakRule1 >= AlertLS || LostSteakRule2 >= AlertLS) {
         alert(LostSteakRule1, LostSteakRule2)
     }
     return
