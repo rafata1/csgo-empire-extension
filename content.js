@@ -164,20 +164,6 @@ function ChoiceToString(c) {
     if (c == 1) return "yellow"
 }
 
-async function alert(ls1, ls2) {
-    try {
-        const resp = await fetch('https://hooks.slack.com/services/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', { method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "no-cors",
-            body: JSON.stringify({text: JSON.stringify({ls1:ls1, ls2:ls2})})
-        })
-    } catch (err) {
-        console.log(err)
-    }
-}
-
 function logging(res) {
     if (total() == 1) {
         console.log("FIRST RESULT: ", res)
@@ -222,16 +208,16 @@ function filterContent() {
         if (total() == 0) {
             clearBetAmount()
         } else
-            if (1 < parseFloat(t) && parseFloat(t) < 10 && IsBet == 0) {
-                bet()
-            }
+        if (1 < parseFloat(t) && parseFloat(t) < 10 && IsBet == 0) {
+            bet()
+        }
     }
 
-    if (t && (t != "0,00" || t!= "0.00")) {
+    if (t && t != "0,00") {
         IsIncreased = 0
     }
 
-    if (t && (t == "0,00" || t == "0.00")) {
+    if (t && t == "0,00") {
         IsBet = 0
         let betValues = document.getElementsByClassName("whitespace-nowrap font-numeric")
         if (betValues.length > 0) {
@@ -263,3 +249,17 @@ function filterContent() {
 }
 
 setInterval(filterContent, 1500)
+
+async function alert(ls1, ls2) {
+    try {
+        const resp = await fetch('https://hooks.slack.com/services/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', { method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "no-cors",
+            body: JSON.stringify({text: JSON.stringify({ls1:ls1, ls2:ls2})})
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
