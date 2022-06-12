@@ -126,6 +126,7 @@ function bet() {
         countDice = 0
         LostSteakRule1 = 0
         LostSteakRule2 = 0
+        alert(JSON.stringify({text: "chuyen sang mode 3"}))
     }
 
     console.log(isFirstTime, "Eated:", Eated)
