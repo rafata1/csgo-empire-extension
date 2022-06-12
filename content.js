@@ -214,11 +214,11 @@ function filterContent() {
         }
     }
 
-    if (t && t != "0,00") {
+    if (t && (t != "0,00" || t != "0.00")) {
         IsIncreased = 0
     }
 
-    if (t && t == "0,00") {
+    if (t && (t == "0,00") || t == "0.00") {
         IsBet = 0
         let betValues = document.getElementsByClassName("whitespace-nowrap font-numeric")
         if (betValues.length > 0) {
