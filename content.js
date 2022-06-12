@@ -102,6 +102,7 @@ function bet() {
     }
 
     if (Mode == -1) {
+        countDice = 0
         return
     }
 
@@ -119,7 +120,7 @@ function bet() {
         countDice = 0
     }
 
-    if (countDice >= MaxDiceInGame) {
+    if (countDice >= MaxDiceInGame && Mode != 3) {
         Mode = 3
         isFirstTime = true
         countDice = 0
@@ -203,7 +204,7 @@ function logging(res) {
     amount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
     console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "DICE: ", countDice, "MONEY: ", amountBeforeBet)
     if (LostSteakRule1 >= AlertLS || LostSteakRule2 >= AlertLS) {
-        alert(LostSteakRule1, LostSteakRule2)
+        alert(JSON.stringify({text: JSON.stringify({ls1:LostSteakRule1, ls2:LostSteakRule2})}))
     }
     return
 }
@@ -244,11 +245,11 @@ function filterContent() {
         }
     }
 
-    if (t && (t != "0,00" || t != "0.00")) {
+    if (t && t != "0.00") {
         IsIncreased = 0
     }
 
-    if (t && (t == "0,00") || t == "0.00") {
+    if (t && t == "0.00") {
         IsBet = 0
         let betValues = document.getElementsByClassName("whitespace-nowrap font-numeric")
         if (betValues.length > 0) {
@@ -280,18 +281,25 @@ function filterContent() {
     }
 }
 
-setInterval(filterContent, 1500)
+setInterval(filterContent, 1000)
 
-async function alert(ls1, ls2) {
+async function alert(s) {
     try {
         const resp = await fetch('https://hooks.slack.com/services/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', { method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             mode: "no-cors",
-            body: JSON.stringify({text: JSON.stringify({ls1:ls1, ls2:ls2})})
+            body: s,
         })
     } catch (err) {
         console.log(err)
     }
 }
+
+// function testRandomChoice() {
+//     for (let i = 0; i<= 10; i++) {
+//         console.log(randomChoice())
+//     }
+// }
+// testRandomChoice()
