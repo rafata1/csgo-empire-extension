@@ -13,6 +13,7 @@ let Choice = -1
 let Eated = 0
 let isWinBefore
 let amountBeforeBet = 0
+let countDice = 0
 
 //config
 let MaxEating = 3
@@ -20,6 +21,7 @@ let BetAmount = 0.01
 let MaxLostStreak = 4
 let MaxTimesDouble = 3
 let AlertLS = 10
+let MaxDiceInGame = 3
 
 function total() {
     return countBlack + countWhite + countYellow
@@ -112,6 +114,19 @@ function bet() {
         return
     }
 
+    // logic count dice in game
+    if (isFirstTime) {
+        countDice = 0
+    }
+
+    if (countDice >= MaxDiceInGame) {
+        Mode = 3
+        isFirstTime = true
+        countDice = 0
+        LostSteakRule1 = 0
+        LostSteakRule2 = 0
+    }
+
     console.log(isFirstTime, "Eated:", Eated)
     if (isFirstTime == true || isWinBefore == true) {
         resetBetAmount()
@@ -147,6 +162,10 @@ function bet() {
             Choice = 0
         }
     }
+    if (Mode == 3) {
+        Choice = randomChoice()
+        console.log("RANDOM CHOICE RESULT: ", Choice)
+    }
 
     let placeBetButtons = document.getElementsByClassName("bet-btn")
     if (IsStarted) {
@@ -156,13 +175,24 @@ function bet() {
         if (Choice == 1) {
             placeBetButtons[2].click()
         }
+        if (Choice == 2) {
+            placeBetButtons[1].click()
+        }
     }
+}
+
+function randomChoice() {
+    let x = Math.floor(Math.random() * 100);
+    if (x <= 6) return 2
+    if (x <= 52) return 0
+    return 1
 }
 
 function ChoiceToString(c) {
     if (c == -1) return "none"
     if (c == 0) return "black"
     if (c == 1) return "yellow"
+    if (c == 2) return "dice"
 }
 
 function logging(res) {
@@ -171,7 +201,7 @@ function logging(res) {
         return
     }
     amount = document.getElementsByClassName("bg-transparent w-full h-full relative z-10")[0].value
-    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "MONEY: ", amountBeforeBet)
+    console.log("MODE:", Mode, "CHOICE:", ChoiceToString(Choice), "RESULT:", res, "AMOUNT:", amount, "LS1:", LostSteakRule1, "LS2:", LostSteakRule2, "DICE: ", countDice, "MONEY: ", amountBeforeBet)
     if (LostSteakRule1 >= AlertLS || LostSteakRule2 >= AlertLS) {
         alert(LostSteakRule1, LostSteakRule2)
     }
@@ -235,6 +265,7 @@ function filterContent() {
                         if (i == 3) {
                             res = "dice"
                             countWhite = countWhite + 1
+                            countDice = countDice + 1
                         }
                         if (i == 4) {
                             res = "yellow"
